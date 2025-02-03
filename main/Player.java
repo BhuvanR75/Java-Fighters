@@ -1,17 +1,28 @@
-//package com.game.src.main;
+package main;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import main.Game.*;
+
+import java.awt.Color;
+
 public class Player {
  private double x;
  private double y;
- 
- private boolean hasChosen = false;
+ private double width;
+ private double height; 
+
+private boolean hasChosen = false;
  
  private boolean jumping;
  private boolean attacking = false;
+
+ public double  health = 100;
+ private int maxHealth = 100;
+ private int healthBarWidth = 200;
+ private int healthBarHeight = 20;
  
  private double velX = 0;
  private double velY = 0;
@@ -22,18 +33,22 @@ public class Player {
  public boolean special = false; 
  public boolean strafe = false;
  public boolean inAction = false;
+ public boolean notDead = true; 
+ public boolean aniCom = false;
  
  Texture tex = Game.getInstance();
  
  private Animation playerWalk, playerWalkLeft, playerJump, playerJumpLeft, playerStillLeft, playerStill; //movements
  private Animation playerPunch, playerPunchLeft, playerKick, playerKickLeft, playerSpecial, playerSpecialLeft; //attacks
- 
- public Player(double x, double y) {
+ public Animation playerDead;
+ public Player(double x, double y,double width,double height) {
   this.x = x;
   this.y = y;
+  this.width = width;
+  this.height = height;
   if (!hasChosen){
   if (Game.ChoiceP1 == Game.CHOICEP1.SAADP1) {
-      System.out.println("Player 1 has chosen Saad"); 
+      System.out.println("Player 1 has chosen Henmanth"); 
       playerWalk = new Animation(
      5, tex.saad[0], tex.saad[1], tex.saad[2], tex.saad[3], tex.saad[4], tex.saad[5], tex.saad[6]
        );
@@ -52,11 +67,11 @@ public class Player {
    playerStill = new Animation (1, tex.saad[7]);
    
    playerPunch = new Animation (
-     3, tex.saad_punch[0], tex.saad_punch[1], tex.saad_punch[2], tex.saad_punch[3], tex.saad_punch[4], tex.saad_punch[5], tex.saad_punch[6], tex.saad_punch[7],
+     1, tex.saad_punch[0], tex.saad_punch[1], tex.saad_punch[2], tex.saad_punch[3], tex.saad_punch[4], tex.saad_punch[5], tex.saad_punch[6], tex.saad_punch[7],
      tex.saad_punch[8]
      );
    playerPunchLeft = new Animation (
-     3, tex.saad_punch[9], tex.saad_punch[10], tex.saad_punch[11], tex.saad_punch[12], tex.saad_punch[13], tex.saad_punch[14], tex.saad_punch[15], tex.saad_punch[16],
+     1, tex.saad_punch[9], tex.saad_punch[10], tex.saad_punch[11], tex.saad_punch[12], tex.saad_punch[13], tex.saad_punch[14], tex.saad_punch[15], tex.saad_punch[16],
       tex.saad_punch[17]
      );
    playerKick = new Animation (
@@ -74,9 +89,12 @@ public class Player {
      7, tex.saad_special[9], tex.saad_special[10], tex.saad_special[11], tex.saad_special[12], tex.saad_special[13], tex.saad_special[14], tex.saad_special[15],
      tex.saad_special[16], tex.saad_special[17]
      ); 
+     playerDead = new Animation (
+     3, tex.saad_die[0], tex.saad_die[1], tex.saad_die[2], tex.saad_die[3], tex.saad_die[4], tex.saad_die[5]
+     );
   }
   else if (Game.ChoiceP1 == Game.CHOICEP1.BONDP1) {
-   System.out.println("Player 1 has chosen Bond");
+   System.out.println("Player 1 has chosen Genash");
    playerWalk = new Animation(
      5, tex.bond[0], tex.bond[1], tex.bond[2], tex.bond[3], tex.bond[4], tex.bond[5], tex.bond[6], tex.bond[7]
        );
@@ -115,6 +133,9 @@ public class Player {
      7, tex.bond_special[8], tex.bond_special[9], tex.bond_special[10], tex.bond_special[11], tex.bond_special[12],
      tex.bond_special[13], tex.bond_special[14], tex.bond_special[15]
      );
+     playerDead = new Animation (
+     3, tex.bond_die[0], tex.bond_die[1], tex.bond_die[2], tex.bond_die[3], tex.bond_die[4], tex.bond_die[5]
+     );
    
   }
   hasChosen = true;
@@ -146,6 +167,10 @@ public class Player {
    jumping = false;
   }
   if (y <= 0) {y=0;}
+  if(health <= 0){
+    notDead = false;
+    playerDead.runAnimation();
+  }
   
   if (velX <0){
    facing = 0;
@@ -164,11 +189,20 @@ public class Player {
   playerKickLeft.runAnimation();
   playerSpecial.runAnimation();
   playerSpecialLeft.runAnimation();
+  playerDead.runAnimation();
   
  }
  
  public void render(Graphics g){
-  
+
+  g.setColor(Color.RED);
+  g.fillRect(13,12, (int) (health / (double) maxHealth * healthBarWidth), healthBarHeight);
+  // g.fillRect((int)(x - healthBarWidth / 10),(int) (y - healthBarHeight + 180), (int) (health / (double) maxHealth * healthBarWidth), healthBarHeight);
+   if(!notDead ){
+      playerDead.drawAnimation(g, (int)x, (int)y);
+      aniCom = true;
+      // System.out.println("not standing");
+    }
   if (jumping && facing == 1) {
    playerJump.drawAnimation(g, (int)x, (int)y);  
   }
@@ -208,12 +242,17 @@ public class Player {
     playerSpecialLeft.drawAnimation(g, (int)x, (int)y);
    }
    else {
-    if (facing == 0) {
+    if (facing == 0 && notDead) {
      playerStill.drawAnimation(g, (int)x, (int)y);
     }
-    else if (facing == 1){
+    else if (facing == 1 && notDead){
      playerStillLeft.drawAnimation(g, (int)x, (int)y);
+    //  System.out.println("standing");
     }
+    // else if(health != 0 ){
+    //   playerDead.drawAnimation(g, (int)x, (int)y);
+    //   System.out.println("not standing");
+    // }
    }
   }
  }
@@ -239,5 +278,21 @@ public class Player {
  public void setVelY(double velY){
   this.velY = velY;
  }
+ public double getWidth() {
+  return width;
+}
+
+public void setWidth(double width) {
+  this.width = width;
+}
+
+ 
+ public double getHeight() {
+  return height;
+}
+
+public void setHeight(double height) {
+  this.height = height;
+}
  
 }

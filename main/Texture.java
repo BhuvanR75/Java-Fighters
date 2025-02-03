@@ -1,4 +1,4 @@
-//package com.game.src.main;
+package main;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -11,27 +11,33 @@ public class Texture {
  SpriteSheet bs,ss;
  private BufferedImage saad_sheet = null;
  private BufferedImage bond_sheet = null;
+//  private BufferedImage bond_winsheet = null;
  
  public BufferedImage[] bond = new BufferedImage[16];
  public BufferedImage[] bond_jump = new BufferedImage[14];
  public BufferedImage[] bond_punch= new BufferedImage[16];
  public BufferedImage[] bond_kick= new BufferedImage[13];
  public BufferedImage[] bond_special= new BufferedImage[16]; 
+ public BufferedImage[] bond_die = new BufferedImage[6];
+//  public BufferedImage[] bond_win = new BufferedImage[8];
  
  public BufferedImage[] saad = new BufferedImage[14];
  public BufferedImage[] saad_jump = new BufferedImage[18];
  public BufferedImage[] saad_punch = new BufferedImage[18];
  public BufferedImage[] saad_kick = new BufferedImage[18];
  public BufferedImage[] saad_special = new BufferedImage[18];
+ public BufferedImage[] saad_die = new BufferedImage[6];
  
  public Texture(){
   
   BufferedImageLoader loaderBond = new BufferedImageLoader();
   BufferedImageLoader loaderSaad = new BufferedImageLoader();
+//   BufferedImageLoader loaderBondWin = new BufferedImageLoader();
   
   try {
    saad_sheet = loaderSaad.loadImage("/res/SAADSHEET.png");
    bond_sheet = loaderBond.loadImage("/res/BONDSHEET.png");
+//    bond_winsheet = loaderBondWin.loadImage("/res/win-ani.png");
   } catch (IOException e) {
    e.printStackTrace();
   }
@@ -56,6 +62,7 @@ public class Texture {
   
   ss = new SpriteSheet(saad_sheet);
   bs = new SpriteSheet(bond_sheet);
+//   bw= new SpriteSheet(bond_winsheet);
   
   getTextures();
   
@@ -157,6 +164,24 @@ public class Texture {
   bond_special[13] = bs.grabImage(6, 12, 100,150);
   bond_special[14] = bs.grabImage(7, 12, 100,150);
   bond_special[15] = bs.grabImage(8, 12, 100,150);
+
+//   bond die 
+  bond_die[0]= bs.grabImage(1,13,100,150);
+  bond_die[1]= bs.grabImage(2,13,100,150);
+  bond_die[2]= bs.grabImage(3,13,100,150);
+  bond_die[3]= bs.grabImage(4,13,100,150);
+  bond_die[4]= bs.grabImage(5,13,100,150);
+  bond_die[5]= bs.grabImage(6,13,100,150);
+
+//   //   bond win 
+//   bond_win[0]= bw.grabImage(1,1,100,150);
+//   bond_win[1]= bw.grabImage(2,1,100,150);
+//   bond_win[2]= bw.grabImage(3,1,100,150);
+//   bond_win[3]= bw.grabImage(4,1,100,150);
+//   bond_win[4]= bw.grabImage(5,1,100,150);
+//   bond_win[5]= bw.grabImage(6,1,100,150);
+//   bond_win[6]= bw.grabImage(7,1,100,150);
+//   bond_win[7]= bw.grabImage(8,1,100,150);
   
   //SAAD STUFF  
   //saad looking right
@@ -264,6 +289,14 @@ public class Texture {
   saad_special[15] = ss.grabImage(7,12,100,150); 
   saad_special[16] = ss.grabImage(8,12,100,150);
   saad_special[17] = ss.grabImage(9,12,100,150); 
+
+//   saad die
+  saad_die[0]= ss.grabImage(1,13,100,150);
+  saad_die[1]= ss.grabImage(2,13,100,150);
+  saad_die[2]= ss.grabImage(3,13,100,150);
+  saad_die[3]= ss.grabImage(4,13,100,150);
+  saad_die[4]= ss.grabImage(5,13,100,150);
+  saad_die[5]= ss.grabImage(6,13,100,150);
  }
  
 }

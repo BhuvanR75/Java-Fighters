@@ -1,8 +1,7 @@
-//package com.game.src.main;
+package main;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +11,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.awt.Rectangle;
+import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
@@ -20,9 +21,11 @@ public class Game extends Canvas implements Runnable{
  public static final int WIDTH = 790;
  public static final int HEIGHT = 590 ;
  public static final int SCALE = 1;
- public final String TITLE = "Final Battle.";
+ public final String TITLE = "HENMANTH  VS  GENASH ";
+ public String gameWinner;
  private boolean running = false;
  private Thread thread;
+ public boolean gameOverSound = false;
 
  //images
  private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -33,10 +36,11 @@ public class Game extends Canvas implements Runnable{
  public BufferedImage gameBG= null;
  private Menu menu;
  private CharSel1 charSel1;
+ public Rectangle replayButton = new Rectangle (312, 312, 131, 69);
 
  //states
  public static enum STATE {
-  MENU, CHARSEL1, CHARSEL2, CHOOSE, GAME
+  MENU, CHARSEL1, CHARSEL2, CHOOSE, GAME, GAMEOVER
  };
  //CHARACTER CHOICE
  public static enum CHOICEP1 {
@@ -70,7 +74,7 @@ public class Game extends Canvas implements Runnable{
    e.printStackTrace();
   }
   try {
-   gameBG = loaderGBG.loadImage ("/res/GAME_BG.JPG");
+   gameBG = loaderGBG.loadImage ("/res/GAME_BG3.JPG");
   } catch (IOException e) {
    e.printStackTrace();
   }
@@ -83,12 +87,6 @@ public class Game extends Canvas implements Runnable{
    addKeyListener(new KeyInput(this));
    menu = new Menu ();
    charSel1 = new CharSel1 ();
-
-
-
-
-
-
 
  }
 
@@ -137,7 +135,7 @@ public class Game extends Canvas implements Runnable{
 
    if (System.currentTimeMillis() - timer > 1000) {
     timer += 1000;
-    System.out.println(updates + " Ticks, FPS " + frames);
+    // System.out.println(updates + " Ticks, FPS " + frames);
     updates = 0;
     frames = 0;
    }
@@ -154,10 +152,105 @@ public class Game extends Canvas implements Runnable{
    p2.init();
   }
    if (State == STATE.CHOOSE) {
-    p = new Player(140.0,340.0);
-    p2 = new Player2(800.0-140.0, 340.0);
+    p = new Player(140.0,340.0,50,14);
+    p2 = new Player2(800.0-140.0, 340.0,50,14);
     State = STATE.GAME;
    }
+
+
+   if (State == STATE.GAME){
+    if (p != null&& p2 !=null) {
+      
+   if (p.punch && p2.getX2p2() + p2.getWidth2() > p.getX() &&
+    p2.getX2p2() < p.getX() + p.getWidth() &&
+    p2.getY2p2() + p2.getHeight2() > p.getY() &&
+    p2.getY2p2() < p.getY() + p.getHeight()) {
+    // Punch collision detected, reduce p2's health
+    p2.health -= 0.5; // adjust the damage value as needed
+    System.out.println(p2.health);
+}
+
+if (p2.punchP2 && p.getX() + p.getWidth() > p2.getX2p2() &&
+    p.getX() < p2.getX2p2() + p2.getWidth2() &&
+    p.getY() + p.getHeight() > p2.getY2p2() &&
+    p.getY() < p2.getY2p2() + p2.getHeight2()) {
+    // Punch collision detected, reduce p's health
+    p.health -= 0.5; // adjust the damage value as needed
+    System.out.println(p.health);
+}
+
+// Repeat the same logic for kick collisions
+if (p.kick && p2.getX2p2() + p2.getWidth2() > p.getX() &&
+    p2.getX2p2() < p.getX() + p.getWidth() &&
+    p2.getY2p2() + p2.getHeight2() > p.getY() &&
+    p2.getY2p2() < p.getY() + p.getHeight()) {
+    // Kick collision detected, reduce p2's health
+    p2.health -= 0.9; // adjust the damage value as needed
+    System.out.println(p2.health);
+}
+
+if (p2.kickP2 && p.getX() + p.getWidth() > p2.getX2p2() &&
+    p.getX() < p2.getX2p2() + p2.getWidth2() &&
+    p.getY() + p.getHeight() > p2.getY2p2() &&
+    p.getY() < p2.getY2p2() + p2.getHeight2()) {
+    // Kick collision detected, reduce p's health
+    p.health -= 0.95; // adjust the damage value as needed
+    System.out.println(p.health);
+}
+    }
+    }
+    if (State == STATE.GAME) {
+      // ...
+      if (!p.notDead) {
+        gameWinner="Player 2 wins!";
+        // p2.won = true;
+        //  p.playerDead.drawAnimation();
+        System.out.println("Player 2 wins!");
+        try{
+          AudioInputStream audioInputStream =
+              AudioSystem.getAudioInputStream(
+                  this.getClass().getResource("/music/female-character-screamgaming-style-230506.wav"));
+          Clip clip = AudioSystem.getClip();
+          clip.open(audioInputStream);
+          clip.start();
+          
+          
+          }
+      
+         catch(Exception ex)
+         {
+         }
+        if (p.aniCom){
+            State = STATE.GAMEOVER;
+          
+        }
+        State = STATE.GAMEOVER;
+      } else if (!p2.notDead) {
+        gameWinner="Player 1 wins!";
+        // p2.playerDead.runAnimation();
+        System.out.println("Player 1 wins!");
+        
+        try{
+          AudioInputStream audioInputStream =
+              AudioSystem.getAudioInputStream(
+                  this.getClass().getResource("/music/female-character-screamgaming-style-230506.wav"));
+          Clip clip = AudioSystem.getClip();
+          clip.open(audioInputStream);
+          clip.start();
+          
+          
+          }
+      
+         catch(Exception ex)
+         {
+         }
+        
+        if (p2.aniCom){
+          State = STATE.GAMEOVER;
+        }
+        // State = STATE.GAMEOVER;
+      }
+    }
  }
  private void render(){
   BufferStrategy bs = this.getBufferStrategy();
@@ -190,6 +283,44 @@ public class Game extends Canvas implements Runnable{
    g.clearRect(0, 0, 800, 600);
    g.drawImage(charSelIMG, 0, 0, null);
    charSel1.render(g);
+  }
+  
+  else if(State == STATE.GAMEOVER) {
+    g.clearRect(0, 0, 800, 600);
+    g.drawImage(gameBG, 0, 0, null);
+    p.render(g);
+    p2.render(g);
+    g.setFont(new Font ("Arial", Font.BOLD,50));
+    g.setColor(Color.white);
+    g.drawString("GAME OVER", 240, 200);
+    g.setFont(new Font ("Arial", Font.BOLD,35));
+    g.drawString(gameWinner, 265, 250);
+    Graphics2D g2d = (Graphics2D) g;
+    g2d.draw(replayButton);
+    // g.fillRect(312, 312, 131, 69);
+    // g.setColor(Color.white);
+    g.setFont(new Font ("Arial", Font.BOLD,20));
+    g.setColor(Color.RED);
+    g.drawString("REPLAY", 340, 350);
+    
+    if(!gameOverSound){
+    try{
+      AudioInputStream audioInputStream =
+          AudioSystem.getAudioInputStream(
+              this.getClass().getResource("/music/game-over-160612.wav"));
+      Clip clip = AudioSystem.getClip();
+      clip.open(audioInputStream);
+      clip.start();
+      gameOverSound =true;
+      
+      }
+  
+     catch(Exception ex)
+     {
+     }
+    }
+  
+
   }
   g.dispose();
   bs.show();
@@ -270,27 +401,27 @@ public class Game extends Canvas implements Runnable{
    }
    p.setVelX(0);
   }
-  else if (key == KeyEvent.VK_L){
-   p.special = true;
-   p.inAction = true;
+//   else if (key == KeyEvent.VK_L){
+//    p.special = true;
+//    p.inAction = true;
 
- //punch audio file
-      try{
-    AudioInputStream audioInputStream =
-        AudioSystem.getAudioInputStream(
-            this.getClass().getResource("/music/select.wav"));
-    Clip clip = AudioSystem.getClip();
-    clip.open(audioInputStream);
-    clip.start();
-    }
+//  punch audio file
+//       try{
+//     AudioInputStream audioInputStream =
+//         AudioSystem.getAudioInputStream(
+//             this.getClass().getResource("/music/select.wav"));
+//     Clip clip = AudioSystem.getClip();
+//     clip.open(audioInputStream);
+//     clip.start();
+//     }
 
-   catch(Exception ex)
-   {
-   }
+//    catch(Exception ex)
+//    {
+//    }
 
- //
-   p.setVelX(0);
-  }
+ 
+//    p.setVelX(0);
+//   }
   else if (key == KeyEvent.VK_S && key == KeyEvent.VK_D){
    p.setX(p.getX() + 140);
    p.strafe = true;
@@ -364,25 +495,25 @@ public class Game extends Canvas implements Runnable{
    }
    p2.setVelXp2(0);
   }
-  else if (key == KeyEvent.VK_NUMPAD3){
-   p2.specialP2 = true;
-   p2.inActionP2 = true;
+  // else if (key == KeyEvent.VK_NUMPAD3){
+  //  p2.specialP2 = true;
+  //  p2.inActionP2 = true;
 
-   try{
-    AudioInputStream audioInputStream =
-        AudioSystem.getAudioInputStream(
-            this.getClass().getResource("/music/special2.wav"));
-    Clip clip = AudioSystem.getClip();
-    clip.open(audioInputStream);
-    clip.start();
-    }
+  //  try{
+  //   AudioInputStream audioInputStream =
+  //       AudioSystem.getAudioInputStream(
+  //           this.getClass().getResource("/music/special2.wav"));
+  //   Clip clip = AudioSystem.getClip();
+  //   clip.open(audioInputStream);
+  //   clip.start();
+  //   }
 
-   catch(Exception ex)
-   {
-   }
+  //  catch(Exception ex)
+  //  {
+  //  }
 
-   p2.setVelXp2(0);
-  }
+  //  p2.setVelXp2(0);
+  // }
   else if (key == KeyEvent.VK_DOWN && key == KeyEvent.VK_LEFT){
    p2.strafeP2 = true;
    p2.inActionP2 = true;

@@ -1,4 +1,4 @@
-//package com.game.src.main;
+package main;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -42,12 +42,13 @@ public void drawAnimation(Graphics g, int x, int y) {
  g.drawImage(currentImg, x, y, null);
  
 }
-
-//public void drawAnimation(Graphics g, int x, int y, int scaleX, int scaleY) {
- //g.drawImage(currentImg, x, y, scaleX, scaleY, null);
- 
-//}
 }
+
+// public void drawAnimation(Graphics g, int x, int y, int scaleX, int scaleY) {
+//  g.drawImage(currentImg, x, y, scaleX, scaleY, null);
+ 
+// }
+// }
 
 
 

@@ -1,4 +1,4 @@
-//package com.game.src.main;
+package main;
 
 import java.awt.event.*;
 import javax.sound.sampled.AudioInputStream;
@@ -19,6 +19,9 @@ public class MouseInput implements MouseListener {
  public void mousePressed (MouseEvent e) {
   int mx = e.getX();
   int my = e.getY();
+
+  System.out.println(mx);
+  System.out.println(my);
   if (Game.State == Game.STATE.MENU){
    if (mx >= 41 && mx <=172) {
        if (my >= 225 && my <= 294) {
@@ -85,12 +88,21 @@ public class MouseInput implements MouseListener {
     Clip clip = AudioSystem.getClip();
     clip.open(audioInputStream);
     clip.start();
+
+    AudioInputStream audioInputStream1 =
+    AudioSystem.getAudioInputStream(
+    this.getClass().getResource("/music/henamanth-101soundboards.wav"));
+    Clip clip1 = AudioSystem.getClip();
+    clip1.open(audioInputStream1);
+    clip1.start();
+
     } 
    catch(Exception ex)
    {
    }
          
         }
+        
   }
   if (my >= 24 && my <= 270) {
    if (mx >= 410 && mx <=545) {
@@ -104,6 +116,14 @@ public class MouseInput implements MouseListener {
     Clip clip = AudioSystem.getClip();
     clip.open(audioInputStream);
     clip.start();
+// charecter voice   
+    AudioInputStream audioInputStream1 =
+    AudioSystem.getAudioInputStream(
+    this.getClass().getResource("/music/ganesh-101soundboards.wav"));
+    Clip clip1 = AudioSystem.getClip();
+    clip1.open(audioInputStream1);
+    clip1.start();
+
     } 
    catch(Exception ex)
    {
@@ -128,6 +148,8 @@ public class MouseInput implements MouseListener {
     Clip clip = AudioSystem.getClip();
     clip.open(audioInputStream);
     clip.start();
+
+
     } 
    catch(Exception ex)
    {
@@ -147,6 +169,14 @@ public class MouseInput implements MouseListener {
     Clip clip = AudioSystem.getClip();
     clip.open(audioInputStream);
     clip.start();
+
+//     charecter voice 
+    AudioInputStream audioInputStream1 =
+    AudioSystem.getAudioInputStream(
+    this.getClass().getResource("/music/henamanth-101soundboards.wav"));
+    Clip clip1 = AudioSystem.getClip();
+    clip1.open(audioInputStream1);
+    clip1.start();
     } 
    catch(Exception ex)
    {
@@ -167,15 +197,46 @@ public class MouseInput implements MouseListener {
     Clip clip = AudioSystem.getClip();
     clip.open(audioInputStream);
     clip.start();
+
+    // charecter voice   
+    AudioInputStream audioInputStream1 =
+    AudioSystem.getAudioInputStream(
+    this.getClass().getResource("/music/ganesh-101soundboards.wav"));
+    Clip clip1 = AudioSystem.getClip();
+    clip1.open(audioInputStream1);
+    clip1.start();
     } 
     catch(Exception ex)
     {
     } // plays select sound
             
       }
-     }
-      
-    }
+     } 
+   }
+
+   else if (Game.State == Game.STATE.GAMEOVER){
+      if (my >= 313 && my <= 380) {
+            if (mx >= 313 && mx <= 444) {
+                  //back button
+                  Game.State = Game.STATE.CHARSEL1;
+                  System.out.println("replay clicked");
+              try{
+             AudioInputStream audioInputStream =
+             AudioSystem.getAudioInputStream(
+             this.getClass().getResource("/music/select.wav"));
+             Clip clip = AudioSystem.getClip();
+             clip.open(audioInputStream);
+             clip.start();
+             } 
+            catch(Exception ex)
+            {
+            }
+                  //choiceP1 = 1;
+         
+            }
+           }
+
+   }
 
     
  } 
